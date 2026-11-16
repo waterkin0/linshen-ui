@@ -13,6 +13,16 @@ const SUPPORTED_BACKGROUND_APIS = new Set([
 const SETTINGS_KEY = 'linshen_ui';
 const APPBAR_ID = 'linshen-ui-appbar';
 const TASK_STATUS_ID = 'linshen-ui-task-status';
+const SETTINGS_ENTRIES = [
+    { id: 'model-response', group: 'Model', label: 'Response settings', icon: 'fa-sliders', drawer: '#ai-config-button' },
+    { id: 'model-connection', group: 'Model', label: 'API connection', icon: 'fa-plug', drawer: '#sys-settings-button' },
+    { id: 'context-worldbook', group: 'Context', label: 'World Info', icon: 'fa-book-atlas', drawer: '#WI-SP-button' },
+    { id: 'context-formatting', group: 'Context', label: 'Formatting', icon: 'fa-font', drawer: '#advanced-formatting-button' },
+    { id: 'context-personas', group: 'Context', label: 'Personas', icon: 'fa-face-smile', drawer: '#persona-management-button' },
+    { id: 'workspace-appearance', group: 'Workspace', label: 'Appearance', icon: 'fa-image', drawer: '#backgrounds-button' },
+    { id: 'workspace-extensions', group: 'Workspace', label: 'Extensions', icon: 'fa-cubes', drawer: '#extensions-settings-button' },
+    { id: 'interface-language', group: 'Interface', label: 'Interface language', icon: 'fa-language' },
+];
 let translations = {};
 
 let appbar;
@@ -23,7 +33,8 @@ let taskTitle;
 let taskDescription;
 let toolsButton;
 let toolsMenu;
-let activeSettingsCategory = 'model';
+let activeSettingsSetting = 'model-response';
+let embeddedSettingsDrawer;
 let recoveryJob;
 let generationActive = false;
 let generationChatKey = '';
@@ -150,13 +161,15 @@ function createAppbar() {
     toolsButton = appbar.querySelector('#linshen-tools-button');
 
     appbar.querySelector('#linshen-context-button')?.addEventListener('click', () => {
-        document.getElementById('WIDrawerIcon')?.click();
+        setActiveSettingsEntry('context-worldbook');
+        setToolsMenuOpen(true, true);
     });
     toolsButton?.addEventListener('click', () => {
         setToolsMenuOpen(toolsMenu?.hidden === true, true);
     });
     appbar.querySelector('#linshen-connection-button')?.addEventListener('click', () => {
-        document.getElementById('API-status-top')?.click();
+        setActiveSettingsEntry('model-connection');
+        setToolsMenuOpen(true, true);
     });
 }
 
@@ -165,6 +178,18 @@ function createSettingsDialog() {
     if (toolsMenu) {
         return;
     }
+
+    const groups = [...new Set(SETTINGS_ENTRIES.map(entry => entry.group))];
+    const navigation = groups.map(group => `
+        <section class="linshen-nav-group" aria-labelledby="linshen-group-${group.toLowerCase()}">
+            <h3 id="linshen-group-${group.toLowerCase()}">${copy(group)}</h3>
+            ${SETTINGS_ENTRIES.filter(entry => entry.group === group).map(entry => `
+                <button type="button" class="linshen-setting-item" data-linshen-setting="${entry.id}" aria-current="${entry.id === activeSettingsSetting ? 'page' : 'false'}">
+                    <i class="fa-solid ${entry.icon}" aria-hidden="true"></i><span>${copy(entry.label)}</span>
+                </button>
+            `).join('')}
+        </section>
+    `).join('');
 
     toolsMenu = document.createElement('div');
     toolsMenu.id = 'linshen-tools-menu';
@@ -182,54 +207,23 @@ function createSettingsDialog() {
                 </button>
             </header>
             <div class="linshen-dialog-layout">
-                <nav class="linshen-category-nav" role="tablist" aria-label="${copy('Settings categories')}" aria-orientation="vertical">
-                    <button type="button" class="linshen-category-tab" id="linshen-tab-model" role="tab" aria-selected="true" aria-controls="linshen-panel-model" tabindex="0" data-linshen-category="model">
-                        <i class="fa-solid fa-sliders" aria-hidden="true"></i><span>${copy('Model')}</span>
-                    </button>
-                    <button type="button" class="linshen-category-tab" id="linshen-tab-context" role="tab" aria-selected="false" aria-controls="linshen-panel-context" tabindex="-1" data-linshen-category="context">
-                        <i class="fa-solid fa-book-open" aria-hidden="true"></i><span>${copy('Context')}</span>
-                    </button>
-                    <button type="button" class="linshen-category-tab" id="linshen-tab-workspace" role="tab" aria-selected="false" aria-controls="linshen-panel-workspace" tabindex="-1" data-linshen-category="workspace">
-                        <i class="fa-solid fa-images" aria-hidden="true"></i><span>${copy('Workspace')}</span>
-                    </button>
-                    <button type="button" class="linshen-category-tab" id="linshen-tab-settings" role="tab" aria-selected="false" aria-controls="linshen-panel-settings" tabindex="-1" data-linshen-category="settings">
-                        <i class="fa-solid fa-gear" aria-hidden="true"></i><span>${copy('Settings')}</span>
-                    </button>
+                <nav class="linshen-category-nav" aria-label="${copy('Settings categories')}">
+                    ${navigation}
                 </nav>
                 <div class="linshen-settings-content">
-                    <section class="linshen-settings-panel" id="linshen-panel-model" role="tabpanel" aria-labelledby="linshen-tab-model" data-linshen-panel="model">
-                        <h3>${copy('Model')}</h3>
-                        <div class="linshen-settings-actions">
-                            <button type="button" data-linshen-target="#leftNavDrawerIcon"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>${copy('Response settings')}</span><i class="fa-solid fa-arrow-up-right-from-square linshen-action-arrow" aria-hidden="true"></i></button>
-                            <button type="button" data-linshen-target="#API-status-top"><i class="fa-solid fa-plug" aria-hidden="true"></i><span>${copy('API connection')}</span><i class="fa-solid fa-arrow-up-right-from-square linshen-action-arrow" aria-hidden="true"></i></button>
-                        </div>
-                    </section>
-                    <section class="linshen-settings-panel" id="linshen-panel-context" role="tabpanel" aria-labelledby="linshen-tab-context" data-linshen-panel="context" hidden>
-                        <h3>${copy('Context')}</h3>
-                        <div class="linshen-settings-actions">
-                            <button type="button" data-linshen-target="#advanced-formatting-button .drawer-icon"><i class="fa-solid fa-font" aria-hidden="true"></i><span>${copy('Formatting')}</span><i class="fa-solid fa-arrow-up-right-from-square linshen-action-arrow" aria-hidden="true"></i></button>
-                            <button type="button" data-linshen-target="#WIDrawerIcon"><i class="fa-solid fa-book-atlas" aria-hidden="true"></i><span>${copy('World Info')}</span><i class="fa-solid fa-arrow-up-right-from-square linshen-action-arrow" aria-hidden="true"></i></button>
-                            <button type="button" data-linshen-target="#persona-management-button .drawer-icon"><i class="fa-solid fa-face-smile" aria-hidden="true"></i><span>${copy('Personas')}</span><i class="fa-solid fa-arrow-up-right-from-square linshen-action-arrow" aria-hidden="true"></i></button>
-                        </div>
-                    </section>
-                    <section class="linshen-settings-panel" id="linshen-panel-workspace" role="tabpanel" aria-labelledby="linshen-tab-workspace" data-linshen-panel="workspace" hidden>
-                        <h3>${copy('Workspace')}</h3>
-                        <div class="linshen-settings-actions">
-                            <button type="button" data-linshen-target="#backgrounds-drawer-toggle"><i class="fa-solid fa-image" aria-hidden="true"></i><span>${copy('Appearance')}</span><i class="fa-solid fa-arrow-up-right-from-square linshen-action-arrow" aria-hidden="true"></i></button>
-                            <button type="button" data-linshen-target="#extensions-settings-button .drawer-icon"><i class="fa-solid fa-cubes" aria-hidden="true"></i><span>${copy('Extensions')}</span><i class="fa-solid fa-arrow-up-right-from-square linshen-action-arrow" aria-hidden="true"></i></button>
-                        </div>
-                    </section>
-                    <section class="linshen-settings-panel" id="linshen-panel-settings" role="tabpanel" aria-labelledby="linshen-tab-settings" data-linshen-panel="settings" hidden>
-                        <h3>${copy('Settings')}</h3>
-                        <div class="linshen-language-setting">
-                            <label for="linshen-ui-language">${copy('Interface language')}</label>
-                            <p>${copy('Changes are saved automatically.')}</p>
-                            <select id="linshen-ui-language">
-                                <option value="system">${copy('Follow system')}</option>
-                                <option value="zh-cn">${copy('Simplified Chinese')}</option>
-                                <option value="en">${copy('English')}</option>
-                            </select>
-                        </div>
+                    <header class="linshen-settings-page-header">
+                        <span id="linshen-setting-group-label"></span>
+                        <h3 id="linshen-setting-title"></h3>
+                    </header>
+                    <div class="linshen-settings-native-slot" id="linshen-settings-native-slot" role="region" aria-labelledby="linshen-setting-title" hidden></div>
+                    <section class="linshen-language-setting linshen-language-panel" id="linshen-language-panel" hidden>
+                        <p>${copy('Changes are saved automatically.')}</p>
+                        <label for="linshen-ui-language">${copy('Interface language')}</label>
+                        <select id="linshen-ui-language">
+                            <option value="system">${copy('Follow system')}</option>
+                            <option value="zh-cn">${copy('Simplified Chinese')}</option>
+                            <option value="en">${copy('English')}</option>
+                        </select>
                     </section>
                 </div>
             </div>
@@ -239,7 +233,7 @@ function createSettingsDialog() {
     document.body.append(toolsMenu);
     toolsMenu.addEventListener('click', onToolsMenuClick);
     toolsMenu.querySelector('#linshen-ui-language')?.addEventListener('change', onLanguageChange);
-    setActiveSettingsCategory(activeSettingsCategory);
+    setActiveSettingsEntry(activeSettingsSetting);
 }
 
 async function onLanguageChange(event) {
@@ -254,7 +248,7 @@ async function onLanguageChange(event) {
 
     const menuWasOpen = toolsMenu && !toolsMenu.hidden;
     const languageHadFocus = document.activeElement?.id === 'linshen-ui-language';
-    const selectedCategory = toolsMenu?.querySelector('[role="tab"][aria-selected="true"]')?.dataset.linshenCategory || activeSettingsCategory;
+    restoreEmbeddedSettingsDrawer();
     await loadTranslations();
 
     toolsMenu?.remove();
@@ -269,34 +263,113 @@ async function onLanguageChange(event) {
 
     if (menuWasOpen) {
         setToolsMenuOpen(true);
-        setActiveSettingsCategory(selectedCategory);
         if (languageHadFocus) {
             toolsMenu?.querySelector('#linshen-ui-language')?.focus();
         }
     }
 }
 
-function setActiveSettingsCategory(category, focus = false) {
+function restoreEmbeddedSettingsDrawer() {
+    if (!embeddedSettingsDrawer) {
+        return;
+    }
+
+    const state = embeddedSettingsDrawer;
+    state.drawer.classList.remove('linshen-embedded-drawer');
+    state.drawerContent.classList.remove('linshen-settings-native');
+    state.drawerContent.classList.toggle('openDrawer', state.contentWasOpen);
+    state.drawerContent.classList.toggle('closedDrawer', state.contentWasClosed);
+    if (state.drawerIcon) {
+        state.drawerIcon.classList.toggle('openIcon', state.iconWasOpen);
+        state.drawerIcon.classList.toggle('closedIcon', state.iconWasClosed);
+    }
+
+    if (state.placeholder.parentNode) {
+        state.placeholder.parentNode.insertBefore(state.drawer, state.placeholder);
+        state.placeholder.remove();
+    } else {
+        state.parent?.append(state.drawer);
+    }
+
+    embeddedSettingsDrawer = null;
+}
+
+function mountEmbeddedSettingsDrawer(selector) {
+    const slot = toolsMenu?.querySelector('#linshen-settings-native-slot');
+    if (!slot) {
+        return;
+    }
+
+    restoreEmbeddedSettingsDrawer();
+    const drawer = document.querySelector(selector);
+    const drawerContent = drawer?.querySelector(':scope > .drawer-content');
+    if (!drawer || !drawerContent || !drawer.parentNode) {
+        slot.innerHTML = `<p class="linshen-setting-unavailable">${copy('This setting is unavailable.')}</p>`;
+        return;
+    }
+
+    const parent = drawer.parentNode;
+    const placeholder = document.createComment(`linshen-settings:${drawer.id}`);
+    parent.insertBefore(placeholder, drawer);
+    const drawerIcon = drawer.querySelector(':scope > .drawer-toggle .drawer-icon');
+    embeddedSettingsDrawer = {
+        drawer,
+        drawerContent,
+        drawerIcon,
+        parent,
+        placeholder,
+        contentWasOpen: drawerContent.classList.contains('openDrawer'),
+        contentWasClosed: drawerContent.classList.contains('closedDrawer'),
+        iconWasOpen: drawerIcon?.classList.contains('openIcon') ?? false,
+        iconWasClosed: drawerIcon?.classList.contains('closedIcon') ?? false,
+    };
+
+    drawer.classList.add('linshen-embedded-drawer');
+    drawerContent.classList.add('linshen-settings-native');
+    drawerContent.classList.remove('closedDrawer');
+    drawerContent.classList.add('openDrawer');
+    drawerIcon?.classList.remove('closedIcon');
+    drawerIcon?.classList.add('openIcon');
+    slot.replaceChildren(drawer);
+}
+
+function setActiveSettingsEntry(id, focus = false) {
     if (!toolsMenu) {
         return;
     }
 
-    const tab = toolsMenu.querySelector(`[role="tab"][data-linshen-category="${category}"]`);
-    if (!tab) {
-        return;
+    const entry = SETTINGS_ENTRIES.find(item => item.id === id) || SETTINGS_ENTRIES[0];
+    activeSettingsSetting = entry.id;
+    for (const button of toolsMenu.querySelectorAll('[data-linshen-setting]')) {
+        button.setAttribute('aria-current', button.dataset.linshenSetting === entry.id ? 'page' : 'false');
     }
 
-    activeSettingsCategory = category;
-    for (const item of toolsMenu.querySelectorAll('[role="tab"]')) {
-        const selected = item === tab;
-        item.setAttribute('aria-selected', String(selected));
-        item.tabIndex = selected ? 0 : -1;
+    toolsMenu.querySelector('#linshen-setting-group-label').textContent = copy(entry.group);
+    toolsMenu.querySelector('#linshen-setting-title').textContent = copy(entry.label);
+    const nativeSlot = toolsMenu.querySelector('#linshen-settings-native-slot');
+    const languagePanel = toolsMenu.querySelector('#linshen-language-panel');
+    const isOpen = !toolsMenu.hidden;
+
+    if (!isOpen) {
+        restoreEmbeddedSettingsDrawer();
+        nativeSlot.hidden = true;
+        languagePanel.hidden = true;
+    } else if (entry.drawer) {
+        languagePanel.hidden = true;
+        nativeSlot.hidden = false;
+        mountEmbeddedSettingsDrawer(entry.drawer);
+    } else {
+        restoreEmbeddedSettingsDrawer();
+        nativeSlot.hidden = true;
+        languagePanel.hidden = false;
+        const languageSelect = toolsMenu.querySelector('#linshen-ui-language');
+        if (languageSelect) {
+            languageSelect.value = getUiSettings().language;
+        }
     }
-    for (const panel of toolsMenu.querySelectorAll('[data-linshen-panel]')) {
-        panel.hidden = panel.dataset.linshenPanel !== category;
-    }
+
     if (focus) {
-        tab.focus();
+        toolsMenu.querySelector(`[data-linshen-setting="${entry.id}"]`)?.focus();
     }
 }
 
@@ -307,10 +380,13 @@ function setToolsMenuOpen(open, focusFirst = false, restoreFocus = true) {
 
     toolsMenu.hidden = !open;
     toolsButton.setAttribute('aria-expanded', String(open));
-    if (open && focusFirst) {
-        toolsMenu.querySelector('[role="tab"][aria-selected="true"]')?.focus();
-    } else if (!open && restoreFocus) {
-        toolsButton.focus();
+    if (open) {
+        setActiveSettingsEntry(activeSettingsSetting, focusFirst);
+    } else {
+        restoreEmbeddedSettingsDrawer();
+        if (restoreFocus) {
+            toolsButton.focus();
+        }
     }
 }
 
@@ -325,9 +401,9 @@ function onToolsMenuClick(event) {
         return;
     }
 
-    const categoryTab = targetElement.closest('[role="tab"][data-linshen-category]');
-    if (categoryTab) {
-        setActiveSettingsCategory(categoryTab.dataset.linshenCategory);
+    const settingButton = targetElement.closest('button[data-linshen-setting]');
+    if (settingButton) {
+        setActiveSettingsEntry(settingButton.dataset.linshenSetting);
         return;
     }
 
@@ -336,14 +412,6 @@ function onToolsMenuClick(event) {
         return;
     }
 
-    const button = targetElement.closest('button[data-linshen-target]');
-    if (!button) {
-        return;
-    }
-
-    const target = document.querySelector(button.dataset.linshenTarget);
-    setToolsMenuOpen(false, false, false);
-    target?.click();
 }
 
 function onToolsMenuKeydown(event) {
@@ -357,23 +425,23 @@ function onToolsMenuKeydown(event) {
         return;
     }
 
-    const categoryTab = event.target.closest?.('[role="tab"][data-linshen-category]');
-    if (categoryTab && ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
-        const tabs = [...toolsMenu.querySelectorAll('[role="tab"]')];
-        const currentIndex = tabs.indexOf(categoryTab);
+    const settingButton = event.target.closest?.('button[data-linshen-setting]');
+    if (settingButton && ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+        const buttons = [...toolsMenu.querySelectorAll('button[data-linshen-setting]')];
+        const currentIndex = buttons.indexOf(settingButton);
         const nextIndex = event.key === 'Home'
             ? 0
             : event.key === 'End'
-                ? tabs.length - 1
-                : (currentIndex + (event.key === 'ArrowDown' ? 1 : -1) + tabs.length) % tabs.length;
+                ? buttons.length - 1
+                : (currentIndex + (event.key === 'ArrowDown' ? 1 : -1) + buttons.length) % buttons.length;
         event.preventDefault();
-        setActiveSettingsCategory(tabs[nextIndex].dataset.linshenCategory, true);
+        setActiveSettingsEntry(buttons[nextIndex].dataset.linshenSetting, true);
         return;
     }
 
     if (event.key === 'Tab') {
-        const focusable = [...toolsMenu.querySelectorAll('button:not([disabled]), select:not([disabled])')]
-            .filter(element => element.tabIndex >= 0 && !element.closest('[hidden]'));
+        const focusable = [...toolsMenu.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+            .filter(element => element.tabIndex >= 0 && !element.closest('[hidden]') && element.getClientRects().length > 0);
         const first = focusable[0];
         const last = focusable.at(-1);
         if (event.shiftKey && document.activeElement === first) {
@@ -758,6 +826,7 @@ export function cleanup() {
     window.clearTimeout(terminalTimer);
     window.clearTimeout(recoverableRefreshTimer);
     recoveryRequestId++;
+    restoreEmbeddedSettingsDrawer();
     document.getElementById(APPBAR_ID)?.remove();
     document.getElementById('linshen-tools-menu')?.remove();
     document.getElementById(TASK_STATUS_ID)?.remove();
@@ -778,5 +847,5 @@ export function cleanup() {
     terminalStatus = null;
     terminalTimer = undefined;
     recoverableRefreshTimer = undefined;
-    activeSettingsCategory = 'model';
+    activeSettingsSetting = 'model-response';
 }

@@ -1,44 +1,30 @@
 # 林深时见鹿
 
-A third-party SillyTavern extension for DeerTavern. It provides a forest-toned reading workspace and shows the fork's background generation state near the composer.
+「林深时见鹿」是为 DeerTavern 定制的 SillyTavern 扩展，为聊天界面提供更专注的阅读体验，并展示后台生成任务的状态。
 
-Project repository: [github.com/waterkin0/linshen-ui](https://github.com/waterkin0/linshen-ui)
+项目地址：[github.com/waterkin0/linshen-ui](https://github.com/waterkin0/linshen-ui)
 
-## Features
+## 功能
 
-- Replaces the spread-out header with one compact, left-aligned control rail for the brand, selected World Book, tools, and connection state.
-- Keeps conversation text in a centered single reading column.
-- Opens World Book settings from the header selector.
-- Opens Tools & settings in a two-column dialog with categories on the left and controls on the right.
-- Offers English, Simplified Chinese, and system language options in the dialog.
-- Applies a forest-ink visual layer while preserving the active SillyTavern theme, character art, and user background.
-- Adds a task status strip for active generation, offline state, and recoverable answers for the current chat.
-- Uses the built-in recovery confirmation flow. It does not create a second resume or cancel flow.
-- Marks Horde generation as foreground-only and explains that the page must remain open.
-- Removes its UI and event handlers when the extension is disabled.
+- 将分散的顶栏操作整合为紧凑的控制栏，集中显示品牌、当前世界书、工具入口和连接状态。
+- 将对话内容放在居中的单列阅读区域中。
+- 通过顶栏选择世界书，并打开对应的世界书设置。
+- 点击「工具与设置」打开双栏弹窗：左侧按模型、上下文、工作区和界面分大类，并列出各自的小类；右侧直接显示 DeerTavern 对应的设置控件。
+- 支持简体中文、English 和跟随系统的界面语言设置。
+- 使用森林色调的界面样式，同时保留当前主题、角色图片和自定义背景。
+- 在聊天区域显示生成中、离线及当前对话可恢复输出等任务状态。
+- 使用 DeerTavern 内置的恢复确认流程，不额外创建一套恢复或取消流程。
+- Horde 生成需要保持页面打开，界面会对此进行提示。
+- 停用扩展时会清理它添加的界面元素和事件处理器。
 
-## Use
+## 安装与使用
 
-This extension ships in `public/scripts/extensions/third-party/linshen-ui`. After reloading, it appears in the Extensions panel and loads unless it has been disabled there. Disable it and reload to return to the original interface.
-
-Background task messaging follows the current server support: OpenAI chat completions, Text Generation WebUI, NovelAI, and Kobold. If the server restarts, only saved partial output can be restored.
-
-
-## Troubleshooting
-
-The extension loads from `/scripts/extensions/third-party/linshen-ui/index.js`. If the browser reports a different folder name, remove the stale copy from the Extensions panel and reload the frontend.
-
-## 使用方式
-
-扩展位于 `public/scripts/extensions/third-party/linshen-ui`。刷新前端后，它会以「林深时见鹿」出现在「扩展」面板中，并在未被停用时自动加载。如需恢复原界面，可停用该扩展并刷新页面。
-
-项目仓库：[github.com/waterkin0/linshen-ui](https://github.com/waterkin0/linshen-ui)
-
-顶栏入口会打开世界书设置，并显示当前已选世界书。点击「工具与设置」会打开双栏弹窗：左侧切换类别，右侧显示对应内容。
-
+扩展位于 `public/scripts/extensions/third-party/linshen-ui`。刷新前端后，它会以「林深时见鹿」出现在「扩展」面板中，并在未被停用时自动加载。停用扩展并刷新页面即可恢复原界面。
 
 后台任务状态支持 OpenAI 聊天补全、Text Generation WebUI、NovelAI 和 Kobold。服务器重启后，只能恢复重启前已保存的部分输出。
 
-## 加载错误排查
+## 故障排查
 
-默认语言跟随浏览器系统语言；也可在「工具与设置」的「界面语言」中选择简体中文或 English。扩展脚本地址为 `/scripts/extensions/third-party/linshen-ui/index.js`。如果报错地址中的目录名不同，可在「扩展」面板删除旧副本，再刷新前端。
+扩展脚本地址为 `/scripts/extensions/third-party/linshen-ui/index.js`。如果浏览器报错中的目录名与此不同，请在「扩展」面板中删除旧副本，再刷新前端。
+
+默认界面语言跟随浏览器系统语言。也可以在「工具与设置」的「界面语言」中选择简体中文或 English。
