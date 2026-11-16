@@ -1,0 +1,16 @@
+{
+    "display_name": "林深时见鹿",
+    "loading_order": 5,
+    "requires": [],
+    "optional": [],
+    "js": "index.js",
+    "css": "style.css",
+    "author": "DeerTavern",
+    "version": "1.2.0",
+    "homePage": "https://github.com/waterkin0/linshen-ui",
+    "hooks": {
+        "activate": "init",
+        "disable": "cleanup",
+        "delete": "cleanup"
+    }
+}

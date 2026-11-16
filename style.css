@@ -1,0 +1,732 @@
+body.linshen-ui-enabled {
+    --sheldWidth: min(94vw, 1480px);
+    --linshen-ink: #17201d;
+    --linshen-panel: #202826;
+    --linshen-panel-raised: #29322f;
+    --linshen-line: rgba(190, 204, 192, 0.18);
+    --linshen-text: var(--SmartThemeBodyColor, #e5e8e3);
+    --linshen-muted: color-mix(in srgb, var(--linshen-text) 64%, transparent);
+    --linshen-sage: #a9c69e;
+    --linshen-brass: #d4b071;
+    --linshen-radius: 14px;
+}
+
+body.linshen-ui-enabled #top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    padding: 0 18px;
+    z-index: 3006;
+    border: 1px solid var(--linshen-line);
+    border-bottom: 0;
+    border-radius: var(--linshen-radius) var(--linshen-radius) 0 0;
+    background-color: var(--linshen-ink);
+    background-color: color-mix(in srgb, var(--SmartThemeBlurTintColor, #202826) 88%, var(--linshen-ink));
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+}
+
+body.linshen-ui-enabled #top-settings-holder > .drawer > .drawer-toggle {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.linshen-appbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1 1 auto;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    color: var(--linshen-text);
+    font-family: var(--mainFontFamily), sans-serif;
+    font-size: calc(var(--mainFontSize) * 0.86);
+}
+
+.linshen-brand,
+.linshen-context-button,
+.linshen-tools-button,
+.linshen-connection-button {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 9px;
+}
+
+.linshen-brand {
+    flex: 0 0 auto;
+    gap: 10px;
+}
+
+.linshen-brand-mark {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    place-items: center;
+    border: 1px solid rgba(169, 198, 158, 0.3);
+    border-radius: 50%;
+    background: rgba(169, 198, 158, 0.08);
+    color: var(--linshen-sage);
+    font-size: 12px;
+}
+
+.linshen-brand-name {
+    font-size: 1em;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.linshen-rail-divider {
+    width: 1px;
+    height: 22px;
+    flex: 0 0 1px;
+    margin: 0 2px;
+    background: var(--linshen-line);
+}
+
+.linshen-context-button,
+.linshen-tools-button,
+.linshen-connection-button {
+    min-height: 36px;
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--linshen-text);
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 140ms ease, border-color 140ms ease;
+}
+
+.linshen-context-button:hover,
+.linshen-tools-button:hover,
+.linshen-connection-button:hover {
+    border-color: var(--linshen-line);
+    background: color-mix(in srgb, var(--linshen-panel-raised) 42%, transparent);
+}
+
+.linshen-context-button {
+    flex: 0 1 auto;
+    justify-content: flex-start;
+    max-width: min(44vw, 480px);
+}
+
+.linshen-context-icon {
+    flex: 0 0 auto;
+    color: var(--linshen-sage);
+    font-size: 0.95em;
+}
+
+.linshen-context-button strong {
+    overflow: hidden;
+    max-width: min(40vw, 420px);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.linshen-context-button .fa-chevron-down {
+    color: var(--linshen-muted);
+    font-size: 0.75em;
+}
+
+.linshen-tools {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.linshen-tools-button {
+    min-width: 38px;
+    justify-content: center;
+    border-color: var(--linshen-line);
+    background: rgba(255, 255, 255, 0.025);
+    white-space: nowrap;
+}
+
+.linshen-tools-button i {
+    color: var(--linshen-sage);
+}
+
+.linshen-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 6000;
+    display: grid;
+    box-sizing: border-box;
+    place-items: center;
+    padding: 24px;
+    background: rgba(5, 10, 8, 0.72);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+}
+
+.linshen-dialog-backdrop[hidden] {
+    display: none !important;
+}
+
+.linshen-settings-dialog {
+    display: flex;
+    width: min(820px, 100%);
+    height: min(600px, calc(100dvh - 48px));
+    min-height: min(420px, calc(100dvh - 48px));
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--linshen-line);
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--SmartThemeBlurTintColor, #202826) 92%, #17201d);
+    color: var(--linshen-text);
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.55);
+}
+
+.linshen-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex: 0 0 auto;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--linshen-line);
+}
+
+.linshen-dialog-brand {
+    color: var(--linshen-sage);
+    font-size: 0.76em;
+    font-weight: 650;
+}
+
+.linshen-dialog-header h2 {
+    margin: 3px 0 0;
+    font-size: 1.28em;
+    font-weight: 650;
+}
+
+.linshen-dialog-close {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    place-items: center;
+    border: 1px solid var(--linshen-line);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.025);
+    color: var(--linshen-muted);
+    cursor: pointer;
+    font-size: 1.05em;
+}
+
+.linshen-dialog-close:hover {
+    border-color: rgba(169, 198, 158, 0.4);
+    background: rgba(169, 198, 158, 0.08);
+    color: var(--linshen-text);
+}
+
+.linshen-dialog-layout {
+    display: grid;
+    min-height: 0;
+    flex: 1 1 auto;
+    grid-template-columns: 206px minmax(0, 1fr);
+}
+
+.linshen-category-nav {
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 12px;
+    border-right: 1px solid var(--linshen-line);
+    background: rgba(8, 14, 12, 0.2);
+}
+
+.linshen-category-tab {
+    display: flex;
+    min-height: 42px;
+    align-items: center;
+    gap: 11px;
+    padding: 8px 11px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--linshen-muted);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
+}
+
+.linshen-category-tab i {
+    width: 16px;
+    text-align: center;
+}
+
+.linshen-category-tab:hover {
+    background: rgba(255, 255, 255, 0.035);
+    color: var(--linshen-text);
+}
+
+.linshen-category-tab[aria-selected="true"] {
+    border-color: rgba(169, 198, 158, 0.18);
+    background: rgba(169, 198, 158, 0.1);
+    color: var(--linshen-sage);
+}
+
+.linshen-settings-content {
+    min-width: 0;
+    overflow: auto;
+    padding: 28px 32px;
+}
+
+.linshen-settings-panel[hidden] {
+    display: none !important;
+}
+
+.linshen-settings-panel h3 {
+    margin: 0 0 22px;
+    color: var(--linshen-text);
+    font-size: 1.3em;
+    font-weight: 650;
+}
+
+.linshen-settings-actions {
+    display: flex;
+    max-width: 560px;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.linshen-settings-actions button {
+    display: flex;
+    min-height: 54px;
+    align-items: center;
+    gap: 13px;
+    padding: 8px 14px;
+    border: 1px solid var(--linshen-line);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.025);
+    color: var(--linshen-text);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.linshen-settings-actions button:hover {
+    transform: translateX(2px);
+    border-color: rgba(169, 198, 158, 0.34);
+    background: rgba(169, 198, 158, 0.065);
+}
+
+.linshen-settings-actions button > i:first-child {
+    width: 18px;
+    color: var(--linshen-sage);
+    text-align: center;
+}
+
+.linshen-settings-actions button > span {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.linshen-settings-actions .linshen-action-arrow {
+    color: var(--linshen-muted);
+    font-size: 0.75em;
+}
+
+.linshen-language-setting {
+    max-width: 460px;
+    padding-top: 2px;
+}
+
+.linshen-language-setting label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--linshen-text);
+    font-weight: 600;
+}
+
+.linshen-language-setting p {
+    margin: 0 0 14px;
+    color: var(--linshen-muted);
+    font-size: 0.86em;
+}
+
+.linshen-language-setting select {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 42px;
+    padding: 8px 10px;
+    border: 1px solid var(--linshen-line);
+    border-radius: 8px;
+    background: var(--linshen-panel-raised);
+    color: var(--linshen-text);
+    font: inherit;
+}
+
+.linshen-connection-button {
+    flex: 0 0 auto;
+    gap: 8px;
+    min-height: 32px;
+    padding: 4px 7px;
+    color: var(--linshen-muted);
+    font-size: 0.84em;
+    white-space: nowrap;
+}
+
+.linshen-connection-indicator {
+    width: 8px;
+    height: 8px;
+    flex: 0 0 8px;
+    border-radius: 50%;
+    background: var(--linshen-brass);
+    box-shadow: 0 0 0 3px rgba(212, 176, 113, 0.12);
+}
+
+.linshen-appbar[data-connection="connected"] .linshen-connection-indicator {
+    background: var(--linshen-sage);
+    box-shadow: 0 0 0 3px rgba(169, 198, 158, 0.12);
+}
+
+.linshen-appbar[data-connection="offline"] .linshen-connection-indicator {
+    background: #d98272;
+    box-shadow: 0 0 0 3px rgba(217, 130, 114, 0.12);
+}
+
+body.linshen-ui-enabled #sheld {
+    border-radius: 0 0 var(--linshen-radius) var(--linshen-radius);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+body.linshen-ui-enabled #chat {
+    background-color: var(--SmartThemeChatTintColor, rgba(23, 29, 28, 0.92));
+    background-color: color-mix(in srgb, var(--SmartThemeChatTintColor, #171d1c) 88%, #1f2a25);
+}
+
+body.linshen-ui-enabled #chat .mes {
+    box-sizing: border-box;
+    width: min(100%, 980px);
+    align-self: center;
+    padding: 15px 18px 0;
+}
+
+body.linshen-ui-enabled #chat .mes_block {
+    padding-left: 12px;
+}
+
+body.linshen-ui-enabled #chat .mes_block .ch_name {
+    color: var(--linshen-sage);
+    font-weight: 650;
+    letter-spacing: 0.01em;
+}
+
+body.linshen-ui-enabled #chat .mes.selected {
+    background-color: color-mix(in srgb, var(--linshen-sage) 12%, transparent);
+}
+
+body.linshen-ui-enabled #chat .mes_text,
+body.linshen-ui-enabled #chat .mes_reasoning {
+    line-height: 1.72;
+}
+
+body.linshen-ui-enabled #chat .mes:not(:last-child)::after {
+    position: absolute;
+    right: 18px;
+    bottom: -6px;
+    left: 72px;
+    height: 1px;
+    background: var(--linshen-line);
+    content: "";
+    opacity: 0.58;
+}
+
+body.linshen-ui-enabled #send_form {
+    border-color: var(--linshen-line);
+    border-radius: 12px;
+    background-color: var(--linshen-panel);
+    background-color: color-mix(in srgb, var(--SmartThemeBlurTintColor, #202826) 88%, #26332d);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+body.linshen-ui-enabled #send_textarea {
+    padding: 10px 12px;
+    line-height: 1.6;
+}
+
+body.linshen-ui-enabled .drawer-content.openDrawer {
+    border-color: var(--linshen-line);
+    border-radius: 12px;
+    background-color: var(--linshen-panel);
+    background-color: color-mix(in srgb, var(--SmartThemeBlurTintColor, #202826) 90%, #26332d);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+}
+
+body.linshen-ui-enabled .drawer-content .standoutHeader,
+body.linshen-ui-enabled .drawer-content .title_restorable {
+    border-color: var(--linshen-line);
+    color: var(--linshen-text);
+}
+
+body.linshen-ui-enabled .drawer-content input:not([type="checkbox"]):not([type="radio"]),
+body.linshen-ui-enabled .drawer-content select,
+body.linshen-ui-enabled .drawer-content textarea,
+body.linshen-ui-enabled #send_form textarea {
+    border-color: var(--linshen-line);
+    border-radius: 8px;
+    background-color: rgba(7, 12, 11, 0.24);
+}
+
+body.linshen-ui-enabled .menu_button,
+body.linshen-ui-enabled .menu_button_icon,
+body.linshen-ui-enabled .right_menu_button {
+    transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease;
+}
+
+body.linshen-ui-enabled :is(button, input, select, textarea, .menu_button, .right_menu_button):focus-visible {
+    outline: 2px solid var(--linshen-sage);
+    outline-offset: 2px;
+}
+
+.linshen-task-status {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0 0 6px;
+    padding: 9px 13px;
+    border: 1px solid var(--linshen-line);
+    border-radius: 11px;
+    background-color: var(--linshen-panel);
+    background-color: color-mix(in srgb, var(--SmartThemeBlurTintColor, #202826) 90%, #26332d);
+    color: var(--linshen-text);
+}
+
+.linshen-task-status[hidden] {
+    display: none !important;
+}
+
+.linshen-task-mark {
+    display: grid;
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    place-items: center;
+    border-radius: 8px;
+    background: rgba(169, 198, 158, 0.1);
+}
+
+.linshen-task-mark span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--linshen-sage);
+}
+
+.linshen-task-copy {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.linshen-task-title {
+    font-size: 0.9em;
+    font-weight: 650;
+}
+
+.linshen-task-description {
+    color: var(--linshen-muted);
+    font-size: 0.8em;
+    line-height: 1.35;
+}
+
+.linshen-task-status[data-state="running"] .linshen-task-mark,
+.linshen-task-status[data-state="starting"] .linshen-task-mark,
+.linshen-task-status[data-state="ready"] .linshen-task-mark {
+    background: rgba(169, 198, 158, 0.12);
+}
+
+.linshen-task-status[data-state="interrupted"] .linshen-task-mark,
+.linshen-task-status[data-state="offline-running"] .linshen-task-mark,
+.linshen-task-status[data-state="offline"] .linshen-task-mark,
+.linshen-task-status[data-state="foreground"] .linshen-task-mark {
+    background: rgba(212, 176, 113, 0.12);
+}
+
+.linshen-task-status[data-state="interrupted"] .linshen-task-mark span,
+.linshen-task-status[data-state="offline-running"] .linshen-task-mark span,
+.linshen-task-status[data-state="offline"] .linshen-task-mark span,
+.linshen-task-status[data-state="foreground"] .linshen-task-mark span {
+    background: var(--linshen-brass);
+}
+
+.linshen-task-status[data-state="offline"] .linshen-task-mark span {
+    background: #d98272;
+}
+
+.linshen-task-status[data-state="stopped"] .linshen-task-mark span {
+    background: var(--linshen-brass);
+}
+
+@media (max-width: 900px) {
+    .linshen-context-button strong {
+        max-width: 32vw;
+    }
+}
+
+@media (max-width: 760px) {
+    body.linshen-ui-enabled {
+        --sheldWidth: 100vw;
+        --sheldWidth: 100dvw;
+    }
+
+    body.linshen-ui-enabled #top-bar {
+        padding: 0 6px;
+    }
+
+    .linshen-appbar {
+        gap: 4px;
+        font-size: calc(var(--mainFontSize) * 0.8);
+    }
+
+    .linshen-brand {
+        gap: 6px;
+    }
+
+    .linshen-context-button,
+    .linshen-tools-button,
+    .linshen-connection-button {
+        min-height: 30px;
+        gap: 6px;
+        padding: 3px 7px;
+    }
+
+    .linshen-context-button {
+        justify-content: flex-start;
+        max-width: 38vw;
+    }
+
+    .linshen-tools-button span {
+        display: none;
+    }
+
+    .linshen-context-button strong {
+        max-width: 32vw;
+    }
+
+    body.linshen-ui-enabled #chat .mes {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .linshen-task-status {
+        align-items: flex-start;
+        padding: 8px 10px;
+    }
+}
+
+@media (max-width: 640px) {
+    .linshen-dialog-backdrop {
+        padding: 8px;
+    }
+
+    .linshen-settings-dialog {
+        width: 100%;
+        height: min(680px, calc(100vh - 16px));
+        height: min(680px, calc(100dvh - 16px));
+        min-height: 0;
+        border-radius: 14px;
+    }
+
+    .linshen-dialog-header {
+        padding: 15px 17px;
+    }
+
+    .linshen-dialog-layout {
+        grid-template-columns: 124px minmax(0, 1fr);
+    }
+
+    .linshen-category-nav {
+        gap: 4px;
+        padding: 12px 7px;
+    }
+
+    .linshen-category-tab {
+        min-height: 40px;
+        gap: 7px;
+        padding: 7px 6px;
+        font-size: 0.84em;
+        line-height: 1.25;
+    }
+
+    .linshen-category-tab i {
+        width: 14px;
+        flex: 0 0 14px;
+    }
+
+    .linshen-settings-content {
+        padding: 20px 14px;
+    }
+
+    .linshen-settings-panel h3 {
+        margin-bottom: 16px;
+        font-size: 1.15em;
+    }
+
+    .linshen-settings-actions button {
+        min-height: 48px;
+        gap: 9px;
+        padding: 7px 9px;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 400px) {
+    .linshen-dialog-layout {
+        grid-template-columns: 100px minmax(0, 1fr);
+    }
+
+    .linshen-category-tab {
+        gap: 5px;
+        padding: 7px 5px;
+        font-size: 0.78em;
+    }
+
+    .linshen-brand-name {
+        font-size: 0.84em;
+    }
+
+    .linshen-brand-mark {
+        width: 25px;
+        height: 25px;
+        flex-basis: 25px;
+    }
+
+    .linshen-connection-button {
+        width: 30px;
+        justify-content: center;
+        padding: 3px;
+    }
+
+    .linshen-connection-button #linshen-connection-label {
+        display: none;
+    }
+
+    .linshen-context-button strong {
+        max-width: 28vw;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .linshen-context-button,
+    .linshen-tools-button,
+    .linshen-connection-button,
+    .linshen-category-tab,
+    .linshen-settings-actions button,
+    body.linshen-ui-enabled .menu_button,
+    body.linshen-ui-enabled .menu_button_icon,
+    body.linshen-ui-enabled .right_menu_button {
+        transition: none;
+    }
+}
